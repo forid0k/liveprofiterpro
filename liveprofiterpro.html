@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIVE PROFITER</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            padding-top: 20px;
+            position: relative; /* Required for absolute positioning of lights */
+            overflow: hidden; /* Prevents any light overflow outside the page */
+        }
+
+        /* Light effects at corners with glowing aura */
+        .light {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ffeb3b;
+            animation: lightEffect 1s infinite alternate;
+            box-shadow: 0 0 15px rgba(255, 235, 59, 0.8); /* Soft glow */
+        }
+
+        /* Positioning the lights at different corners */
+        .light.top-left {
+            top: 10px;
+            left: 10px;
+        }
+
+        .light.top-right {
+            top: 10px;
+            right: 10px;
+        }
+
+        .light.bottom-left {
+            bottom: 10px;
+            left: 10px;
+        }
+
+        .light.bottom-right {
+            bottom: 10px;
+            right: 10px;
+        }
+
+        @keyframes lightEffect {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.5;
+                transform: scale(1.5);
+            }
+        }
+
+        /* Signal Box */
+        #signalResult {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 30px;
+            width: 350px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            display: none;
+            font-family: 'Courier New', Courier, monospace;
+            border: 2px solid #00ff99;
+            animation: boxGlow 1.5s infinite alternate;
+        }
+
+        #signalResult h2 {
+            font-size: 2.5em;
+            color: #00ff99;
+            margin-bottom: 20px;
+            text-shadow: 0px 0px 15px rgba(0, 255, 153, 1); /* Glow effect */
+        }
+
+        #signalResult p {
+            font-size: 1.5em;
+            margin: 10px 0;
+            font-weight: bold;
+            text-shadow: 0px 0px 8px rgba(0, 255, 153, 1); /* Glow effect */
+        }
+
+        #signalResult span {
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+
+        /* No Signal Message */
+        #noSignal {
+            background-color: rgba(255, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 12px;
+            width: 300px;
+            text-align: center;
+            font-size: 1.2em;
+            display: none;
+            border: 2px solid #ff0000;
+        }
+
+        /* TradingView Chart */
+        #tradingview-widget {
+            width: 100%;
+            height: 500px;
+            margin-top: 30px;
+            box-shadow: 0px 0px 15px rgba(0, 255, 153, 1); /* Light effect around chart */
+        }
+        /* Signal Box Animation */
+        @keyframes boxGlow {
+            0% {
+                box-shadow: 0 0 30px rgba(0, 255, 153, 1), 0 0 40px rgba(0, 255, 153, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 50px rgba(0, 255, 153, 1), 0 0 70px rgba(0, 255, 153, 0.5);
+            }
+        }
+
+        /* Button Styling */
+        .join-btn {
+            background-color: #00ff99;
+            color: #000;
+            font-size: 1.2em;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 30px;
+            box-shadow: 0 4px 20px rgba(0, 255, 153, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .join-btn:hover {
+            background-color: #ffeb3b;
+            box-shadow: 0 6px 25px rgba(255, 235, 59, 0.6);
+            color: #000;
+        }
+    </style>
+    <script>
+        // Function to get Bangladesh Time (UTC+6) and display the signal
+        function fetchAutoSignal() {
+            const now = new Date();
+            const bdTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Dhaka"}));
+            const minutes = bdTime.getMinutes();
+            const nextMinute = minutes === 59 ? 0 : minutes + 1;
+            const nextSignalTime = `${bdTime.getHours()}:${nextMinute < 10 ? '0' + nextMinute : nextMinute}`;
+
+            // Sample signals for different markets
+            const signals = [
+                { pair: "CADJPY", signalType: "PUT", accuracy: Math.floor(Math.random() * (90 - 70 + 1)) + 70 + "%" },
+                { pair: "EURGBP", signalType: "CALL", accuracy: Math.floor(Math.random() * (80 - 60 + 1)) + 60 + "%" },
+                { pair: "USDJPY", signalType: "PUT", accuracy: Math.floor(Math.random() * (95 - 80 + 1)) + 80 + "%" }
+            ];
+
+            const signal = signals[Math.floor(Math.random() * signals.length)];
+
+            // Format and display signal details
+            const formattedSignal = `
+╔══════════════════════╗
+📊All Broker Market ➛ ${signal.pair}
+📊➛ Signal Type: ⬇️ ${signal.signalType}
+⏲️➛ 1 Minute Trade
+⏲️Trade Time : ${nextSignalTime}
+☣️Accuracy   : ${signal.accuracy} 
+╚══════════════════════╝
+            `;
+
+            // Set the formatted signal text
+            document.getElementById('formattedSignal').innerText = formattedSignal;
+            document.getElementById('signalResult').style.display = 'block';
+            document.getElementById('noSignal').style.display = 'none';
+
+            // Update the TradingView widget based on the market pair
+            updateTradingViewWidget(signal.pair);
+
+            console.log(`Signal for pair: ${signal.pair}, Time: ${nextSignalTime}, Type: ${signal.signalType}, Accuracy: ${signal.accuracy}`);
+        }
+
+        // Update TradingView chart widget based on market pair
+        function updateTradingViewWidget(pair) {
+            let symbol = "";
+            switch (pair) {
+                case "CADJPY":
+                    symbol = "FX:CADJPY";  // TradingView Forex ticker for CADJPY
+                    break;
+                case "EURGBP":
+                    symbol = "FX:EURGBP";  // TradingView Forex ticker for EURGBP
+                    break;
+                case "USDJPY":
+                    symbol = "FX:USDJPY";  // TradingView Forex ticker for USDJPY
+                    break;
+                default:
+                    symbol = "FX:AAPL"; // Default market if no match (fallback)
+                    break;
+            }
+
+            // Create and load TradingView widget
+            const tradingViewScript = document.createElement('script');
+            tradingViewScript.src = "https://s3.tradingview.com/tv.js";
+            tradingViewScript.onload = function () {
+                new TradingView.widget({
+                    "container_id": "tradingview-widget",
+                    "autosize": true,
+                    "symbol": symbol,
+                    "interval": "1",
+                    "timezone": "Asia/Dhaka",
+                    "theme": "dark",
+                    "style": "1",
+                    "toolbar_bg": "#f1f3f6",
+                    "withdateranges": true,
+                    "hide_side_toolbar": false,
+                    "allow_symbol_change": true,
+                    "show_popup_button": true
+                });
+            };
+
+            document.getElementById("tradingview-widget").innerHTML = ''; // Clear previous chart
+            document.getElementById("tradingview-widget").appendChild(tradingViewScript);
+        }
+
+        // Calculate the time to next 3-minute interval and update the signal
+        function setNextSignal() {
+            const now = new Date();
+            const nextMinuteTime = new Date(now.setMinutes(now.getMinutes() + 3, 0, 0)); // Round to next 3 minutes
+            const delay = nextMinuteTime - now;
+
+            setTimeout(() => {
+                fetchAutoSignal();  // Fetch the signal when the next 3-minute arrives
+                setInterval(fetchAutoSignal, 180000);  // Continue fetching every 3 minutes (180,000 ms)
+            }, delay);
+        }
+
+        window.onload = function() {
+            setNextSignal();  // Start signal fetching on page load
+        };
+    </script>
+</head>
+<body>
+    <!-- Light effects at corners -->
+    <div class="light top-left"></div>
+    <div class="light top-right"></div>
+    <div class="light bottom-left"></div>
+    <div class="light bottom-right"></div>
+    <div id="signalResult">
+        <pre id="formattedSignal"></pre>
+    </div>
+    <div id="noSignal">
+        <p>No valid signals available at the moment. Please wait...</p>
+    </div>
+
+    <!-- TradingView Chart Widget -->
+    <div id="tradingview-widget"></div>
+
+    <!-- JOIN CHANNEL Button -->
+    <a href="https://t.me/forid0k" class="join-btn" target="_blank">JOIN CHANNEL</a>
+</body>
+</html>
